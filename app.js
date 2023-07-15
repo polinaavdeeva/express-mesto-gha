@@ -1,7 +1,7 @@
 const express = require('express');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { ERROR_NOT_FOUND } = require('./errors/errors');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -30,7 +30,8 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 
+app.use('*', (req, res) => res.status(ERROR_NOT_FOUND).json({ message: `Ресурс по адресу ${req.path} не найден` }));
+
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });

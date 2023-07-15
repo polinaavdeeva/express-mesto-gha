@@ -21,7 +21,13 @@ module.exports.getUser = (req, res) => {
       }
       res.send(user);
     })
-    .catch(() => res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Некорректные данные.' });
+        return;
+      }
+      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 module.exports.createUser = (req, res) => {
