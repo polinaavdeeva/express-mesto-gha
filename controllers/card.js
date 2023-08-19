@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const Card = require('../models/card');
 
 const {
@@ -13,13 +14,19 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: `Карточка с указанным _id: ${req.params.cardId} не найдена.` });
         return;
       }
-      res.send(card);
+
+      if (card.owner.toString() !== req.user._id) {
+        res.status(400).send({ message: 'Можно удалять только свои карточки' });
+        return;
+      }
+
+      return Card.deleteOne(card).then(() => res.status(200).send(card));
     })
     .catch(() => res.status(ERROR_BAD_REQUEST).send({ message: 'На сервере произошла ошибка' }));
 };
