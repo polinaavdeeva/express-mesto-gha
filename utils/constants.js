@@ -1,1 +1,3 @@
-module.exports.regExp = /^https?:\/\/.*/;
+const regExp = /^https?:\/\/.*/;
+
+module.exports = { regExp };

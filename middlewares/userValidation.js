@@ -1,5 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-const regExp = require('../utils/constants');
+const { regExp } = require('../utils/constants');
 
 module.exports.validateUserInfo = celebrate({
   body: Joi.object().keys({
