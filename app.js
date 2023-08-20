@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { ERROR_NOT_FOUND } = require('./errors/errors');
+const handleError = require('./middlewares/errorsHandler');
+const NotFoundError = require('./errors/NotFoundError');
 const { createUser, login } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 
@@ -24,7 +25,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 app.use('/users', require('./routes/user'));
 app.use('/cards', auth, require('./routes/card'));
 
-app.use('*', (req, res) => res.status(ERROR_NOT_FOUND).json({ message: `Ресурс по адресу ${req.path} не найден` }));
+app.use(handleError);
+
+app.use('*', (req, res, next) => next(new NotFoundError(`Ресурс по адресу ${req.path} не найден.`)));
 
 app.post('/signin', login);
 app.post('/signup', createUser);
