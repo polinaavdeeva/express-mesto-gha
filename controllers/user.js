@@ -33,9 +33,10 @@ module.exports.createUser = (req, res, next) => {
   const {
     name,
     about,
+    // eslint-disable-next-line no-unused-vars
+    password,
     avatar,
     email,
-    password,
   } = req.body;
 
   bcrypt.hash(req.body.password, 10)
@@ -46,12 +47,16 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then(() => res.status(200).send({
-      email,
-      name,
-      about,
-      avatar,
-    }))
+    .then((user) => {
+      const { _id } = user;
+      res.status(200).send({
+        email,
+        name,
+        about,
+        avatar,
+        _id,
+      });
+    })
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email существует.'));
@@ -129,7 +134,13 @@ module.exports.getCurrentUser = (req, res, next) => {
       if (!user) {
         next(new NotFoundError(`Пользователь с указанным _id: ${req.params.userId} не найден.`));
       }
-      return res.status(200).send(user);
+      res.status(200).send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные.'));
+        return;
+      }
+      next(err);
+    });
 };

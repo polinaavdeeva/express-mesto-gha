@@ -3,13 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { handleError } = require('./middlewares/errorsHandler');
-const NotFoundError = require('./errors/NotFoundError');
-const { createUser, login } = require('./controllers/user');
-const { auth } = require('./middlewares/auth');
-const {
-  validateUserAuthentication,
-  validateUserInfo,
-} = require('./middlewares/userValidation');
+const router = require('./routes/index');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -27,18 +21,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log('Что-то пошло не так');
   });
 
-app.post('/signup', validateUserInfo, createUser);
-app.post('/signin', validateUserAuthentication, login);
-
-app.use(auth);
-
-app.use('/users', require('./routes/user'));
-app.use('/cards', require('./routes/card'));
-
+app.use(router);
 app.use(errors());
 app.use(handleError);
-
-app.use('*', () => { throw new NotFoundError('Ресурс не найден.'); });
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
