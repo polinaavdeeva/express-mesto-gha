@@ -1,15 +1,11 @@
-module.exports.handleError = ((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
+const handleError = (err, _req, res, next) => {
   const { statusCode = 500, message } = err;
+  res.status(statusCode).send({
+    message: statusCode === 500
+      ? 'Ошибка на сервере'
+      : message,
+  });
+  next();
+};
 
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-
-  return next();
-});
+module.exports = { handleError };
