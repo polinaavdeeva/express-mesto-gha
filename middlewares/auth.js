@@ -5,21 +5,21 @@ const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new UnauthorizedError('необходима авторизация'));
+    return next(new UnauthorizedError('Необходима авторизация.'));
   }
 
   const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
-    payload = jwt.verify(token, 'some-secret-key');
+    payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
-    return next(new UnauthorizedError('необходима авторизация'));
+    next(new UnauthorizedError('Необходима авторизация.'));
   }
 
-  req.user = payload; // записываем пейлоуд в объект запроса
+  req.user = payload;
 
-  return next(); // пропускаем запрос дальше
+  return next();
 };
 
 module.exports = { auth };
