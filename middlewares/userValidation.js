@@ -1,7 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 const { regExp } = require('../utils/constants');
 
-module.exports.validateUserInfo = celebrate({
+const validateUserInfo = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -11,28 +11,36 @@ module.exports.validateUserInfo = celebrate({
   }),
 });
 
-module.exports.validateUserAuthentication = celebrate({
+const validateUserAuthentication = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(6),
   }),
 });
 
-module.exports.validateUserUpdate = celebrate({
+const validateUserUpdate = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
   }),
 });
 
-module.exports.validateAvatarUpdate = celebrate({
+const validateAvatarUpdate = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required().pattern(regExp),
   }),
 });
 
-module.exports.validateUserId = celebrate({
+const validateUserId = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().required().hex().length(24),
   }),
 });
+
+module.exports = {
+  validateAvatarUpdate,
+  validateUserAuthentication,
+  validateUserId,
+  validateUserInfo,
+  validateUserUpdate,
+};
