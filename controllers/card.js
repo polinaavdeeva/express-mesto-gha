@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
@@ -23,7 +22,7 @@ module.exports.deleteCard = (req, res, next) => {
         return;
       }
 
-      return Card.deleteOne(card).then(() => res.status(200).send(card));
+      Card.deleteOne(card).then(() => res.status(200).send(card));
     })
     .catch(next);
 };
