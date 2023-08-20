@@ -36,8 +36,8 @@ app.use(handleError);
 
 app.use('*', (req, res, next) => next(new NotFoundError(`Ресурс по адресу ${req.path} не найден.`)));
 
-app.post('/signin', validateUserInfo, login);
-app.post('/signup', validateUserAuthentication, createUser);
+app.post('/signin', validateUserAuthentication, login);
+app.post('/signup', validateUserInfo, createUser);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
