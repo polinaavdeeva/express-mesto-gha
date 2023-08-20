@@ -11,5 +11,5 @@ module.exports.handleError = ((err, req, res, next) => {
         : message,
     });
 
-  next();
+  return next();
 });
