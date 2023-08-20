@@ -5,6 +5,10 @@ const handleError = require('./middlewares/errorsHandler');
 const NotFoundError = require('./errors/NotFoundError');
 const { createUser, login } = require('./controllers/user');
 const auth = require('./middlewares/auth');
+const {
+  validateUserAuthentication,
+  validateUserInfo,
+} = require('./middlewares/userValidation');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -29,8 +33,8 @@ app.use(handleError);
 
 app.use('*', (req, res, next) => next(new NotFoundError(`Ресурс по адресу ${req.path} не найден.`)));
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validateUserInfo, login);
+app.post('/signup', validateUserAuthentication, createUser);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
