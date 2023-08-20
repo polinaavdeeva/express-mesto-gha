@@ -26,8 +26,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log('Что-то пошло не так');
   });
 
+app.use(auth);
 app.use('/users', require('./routes/user'));
-app.use('/cards', auth, require('./routes/card'));
+app.use('/cards', require('./routes/card'));
 
 app.use(handleError);
 
