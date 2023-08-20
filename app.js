@@ -27,17 +27,18 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log('Что-то пошло не так');
   });
 
-app.use(errors());
+app.post('/signup', validateUserInfo, createUser);
+app.post('/signin', validateUserAuthentication, login);
+
 app.use(auth);
+
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 
+app.use(errors());
 app.use(handleError);
 
-app.use('*', (req, res, next) => next(new NotFoundError(`Ресурс по адресу ${req.path} не найден.`)));
-
-app.post('/signin', validateUserAuthentication, login);
-app.post('/signup', validateUserInfo, createUser);
+app.use('*', () => { throw new NotFoundError('Ресурс не найден.'); });
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

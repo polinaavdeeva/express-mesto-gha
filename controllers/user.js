@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
-const ConflictError = require('../errors/ConflictError');
+const { ConflictError } = require('../errors/ConflictError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -30,20 +30,27 @@ module.exports.getUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
-      name: req.body.name,
-      about: req.body.about,
-      avatar: req.body.avatar,
-      email: req.body.email,
+      name,
+      about,
+      avatar,
+      email,
       password: hash,
     }))
-    .then((user) => res.status(200).send({
-      _id: user._id,
-      email: user.email,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
+    .then(() => res.status(200).send({
+      email,
+      name,
+      about,
+      avatar,
     }))
     .catch((err) => {
       if (err.code === 11000) {
