@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { handleError } = require('./middlewares/errorsHandler');
 const router = require('./routes/index');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('cors');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -21,7 +23,17 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log('Что-то пошло не так');
   });
 
+  app.use(cors());
+
+  app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
+app.use(requestLogger);
 app.use(router);
+app.use(errorLogger);
 app.use(errors());
 app.use(handleError);
 
