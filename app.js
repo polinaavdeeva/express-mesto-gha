@@ -23,9 +23,18 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log('Что-то пошло не так');
   });
 
-  app.use(cors());
+const corsOptions = {
+  origin : [
+    'http://localhost:3000',
+    'http://websitemesto.students.nomoredomainsicu.ru'
+  ],
+  optionsSuccessStatus: 200,
+  credentials: true
+}
 
-  app.get('/crash-test', () => {
+app.use(cors(corsOptions));
+
+app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
